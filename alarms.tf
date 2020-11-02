@@ -8,7 +8,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_rds_DatabaseConnections_writer" {
   period              = "60"
   statistic           = "Sum"
   threshold           = var.cw_max_conns
-  alarm_description   = "RDS Maximum connection Alarm for ${aws_rds_cluster.default.id} writer"
+  alarm_description   = "RDS Maximum connection Alarm for ${aws_rds_cluster.default[count.index].id} writer"
   alarm_actions       = [var.cw_sns_topic]
   ok_actions          = [var.cw_sns_topic]
 
@@ -28,7 +28,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_rds_CPU_writer" {
   period              = "60"
   statistic           = "Maximum"
   threshold           = var.cw_max_cpu
-  alarm_description   = "RDS CPU Alarm for ${aws_rds_cluster.default.id} writer"
+  alarm_description   = "RDS CPU Alarm for ${aws_rds_cluster.default[count.index].id} writer"
   alarm_actions       = [var.cw_sns_topic]
   ok_actions          = [var.cw_sns_topic]
 
