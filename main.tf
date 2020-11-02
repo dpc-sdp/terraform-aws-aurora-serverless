@@ -212,7 +212,7 @@ resource "aws_db_subnet_group" "main" {
   count       = var.enabled ? 1 : 0
   name        = var.name
   description = "Group of DB subnets"
-  subnet_ids  = [var.subnets]
+  subnet_ids  = var.subnets
 
   tags = local.tags
 }
