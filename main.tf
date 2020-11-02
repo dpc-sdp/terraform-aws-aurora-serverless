@@ -171,7 +171,7 @@
 resource "aws_rds_cluster" "default" {
   count              = var.enabled ? 1 : 0
   cluster_identifier = var.identifier_prefix != "" ? format("%s-cluster", var.identifier_prefix) : format("%s-aurora-cluster", var.envname)
-  availability_zones = [var.azs]
+  availability_zones = var.azs
 
   engine         = "aurora"
   engine_version = var.engine_version
@@ -187,7 +187,7 @@ resource "aws_rds_cluster" "default" {
   preferred_maintenance_window        = var.preferred_maintenance_window
   port                                = var.port
   db_subnet_group_name                = aws_db_subnet_group.main[count.index].name
-  vpc_security_group_ids              = [var.security_groups]
+  vpc_security_group_ids              = var.security_groups
   snapshot_identifier                 = var.snapshot_identifier
   storage_encrypted                   = var.storage_encrypted
   apply_immediately                   = var.apply_immediately
