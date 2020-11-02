@@ -222,7 +222,7 @@ resource "random_id" "server" {
   count = var.enabled ? 1 : 0
 
   keepers = {
-    id = aws_db_subnet_group.main.name
+    id = aws_db_subnet_group.main[count.index].name
   }
 
   byte_length = 8
@@ -245,7 +245,7 @@ data "aws_iam_policy_document" "monitoring-rds-assume-role-policy" {
 resource "aws_iam_role" "rds-enhanced-monitoring" {
   count              = var.enabled && var.monitoring_interval > 0 ? 1 : 0
   name_prefix        = "rds-enhanced-mon-${var.envname}-"
-  assume_role_policy = data.aws_iam_policy_document.monitoring-rds-assume-role-policy.json
+  assume_role_policy = data.aws_iam_policy_document.monitoring-rds-assume-role-policy[count.index].json
 }
 
 resource "aws_iam_role_policy_attachment" "rds-enhanced-monitoring-policy-attach" {
