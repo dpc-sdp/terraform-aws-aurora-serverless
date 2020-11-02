@@ -30,7 +30,7 @@ variable "azs" {
 }
 
 variable "security_groups" {
-  type        = list
+  type        = list(string)
   description = "VPC Security Group IDs"
 }
 
