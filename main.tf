@@ -35,7 +35,7 @@
   * resource "aws_sns_topic" "db_alarms_56" {
   *   name = "aurora-db-alarms-56"
   * }
-  * 
+  *
   * module "aurora_db_56" {
   *   source                          = "../.."
   *   name                            = "test-aurora-db-56"
@@ -56,13 +56,13 @@
   *   db_parameter_group_name         = "${aws_db_parameter_group.aurora_db_56_parameter_group.id}"
   *   db_cluster_parameter_group_name = "${aws_rds_cluster_parameter_group.aurora_cluster_56_parameter_group.id}"
   * }
-  * 
+  *
   * resource "aws_db_parameter_group" "aurora_db_56_parameter_group" {
   *   name        = "test-aurora-db-56-parameter-group"
   *   family      = "aurora5.6"
   *   description = "test-aurora-db-56-parameter-group"
   * }
-  * 
+  *
   * resource "aws_rds_cluster_parameter_group" "aurora_cluster_56_parameter_group" {
   *   name        = "test-aurora-56-cluster-parameter-group"
   *   family      = "aurora5.6"
@@ -76,7 +76,7 @@
   * resource "aws_sns_topic" "db_alarms" {
   *   name = "aurora-db-alarms"
   * }
-  * 
+  *
   * module "aurora_db_57" {
   *   source                          = "../.."
   *   engine_version                  = "5.7.12"
@@ -98,13 +98,13 @@
   *   db_parameter_group_name         = "${aws_db_parameter_group.aurora_db_57_parameter_group.id}"
   *   db_cluster_parameter_group_name = "${aws_rds_cluster_parameter_group.aurora_57_cluster_parameter_group.id}"
   * }
-  * 
+  *
   * resource "aws_db_parameter_group" "aurora_db_57_parameter_group" {
   *   name        = "test-aurora-db-57-parameter-group"
   *   family      = "aurora-mysql5.7"
   *   description = "test-aurora-db-57-parameter-group"
   * }
-  * 
+  *
   * resource "aws_rds_cluster_parameter_group" "aurora_57_cluster_parameter_group" {
   *   name        = "test-aurora-57-cluster-parameter-group"
   *   family      = "aurora-mysql5.7"
@@ -161,7 +161,7 @@
   * Terraform modules on the Terraform Module Registry are open projects, and community contributions are essential for keeping them great. Please follow our guidelines when contributing changes.
   *
   * For more information, see our [module contribution guide](https://registry.terraform.io/modules/104corp/aurora-serverless/aws/).
-  * 
+  *
   * ## Contributors
   *
   * To see who's already involved, see the list of [contributors](https://github.com/104corp/terraform-aws-aurora-serverless/graphs/contributors).
@@ -169,60 +169,60 @@
 
 // Create DB Cluster
 resource "aws_rds_cluster" "default" {
-  count              = "${var.enabled ? 1 : 0}"
-  cluster_identifier = "${var.identifier_prefix != "" ? format("%s-cluster", var.identifier_prefix) : format("%s-aurora-cluster", var.envname)}"
-  availability_zones = ["${var.azs}"]
+  count              = var.enabled ? 1 : 0
+  cluster_identifier = var.identifier_prefix != "" ? format("%s-cluster", var.identifier_prefix) : format("%s-aurora-cluster", var.envname)
+  availability_zones = [var.azs]
 
   engine         = "aurora"
-  engine_version = "${var.engine_version}"
+  engine_version = var.engine_version
   engine_mode    = "serverless"
 
-  database_name                       = "${var.database_name}"
-  master_username                     = "${var.username}"
-  master_password                     = "${var.password}"
+  database_name                       = var.database_name
+  master_username                     = var.username
+  master_password                     = var.password
   final_snapshot_identifier           = "${var.final_snapshot_identifier}-${random_id.server.hex}"
-  skip_final_snapshot                 = "${var.skip_final_snapshot}"
-  backup_retention_period             = "${var.backup_retention_period}"
-  preferred_backup_window             = "${var.preferred_backup_window}"
-  preferred_maintenance_window        = "${var.preferred_maintenance_window}"
-  port                                = "${var.port}"
-  db_subnet_group_name                = "${aws_db_subnet_group.main.name}"
-  vpc_security_group_ids              = ["${var.security_groups}"]
-  snapshot_identifier                 = "${var.snapshot_identifier}"
-  storage_encrypted                   = "${var.storage_encrypted}"
-  apply_immediately                   = "${var.apply_immediately}"
-  db_cluster_parameter_group_name     = "${var.db_cluster_parameter_group_name}"
-  iam_database_authentication_enabled = "${var.iam_database_authentication_enabled}"
+  skip_final_snapshot                 = var.skip_final_snapshot
+  backup_retention_period             = var.backup_retention_period
+  preferred_backup_window             = var.preferred_backup_window
+  preferred_maintenance_window        = var.preferred_maintenance_window
+  port                                = var.port
+  db_subnet_group_name                = aws_db_subnet_group.main.name
+  vpc_security_group_ids              = [var.security_groups]
+  snapshot_identifier                 = var.snapshot_identifier
+  storage_encrypted                   = var.storage_encrypted
+  apply_immediately                   = var.apply_immediately
+  db_cluster_parameter_group_name     = var.db_cluster_parameter_group_name
+  iam_database_authentication_enabled = var.iam_database_authentication_enabled
 
   scaling_configuration {
-    auto_pause   = "${var.auto_pause}"
-    max_capacity = "${var.max_capacity}"
-    min_capacity = "${var.min_capacity}"
+    auto_pause   = var.auto_pause
+    max_capacity = var.max_capacity
+    min_capacity = var.min_capacity
   }
 
   lifecycle {
     create_before_destroy = true
   }
 
-  tags = "${local.tags}"
+  tags = local.tags
 }
 
 // DB Subnet Group creation
 resource "aws_db_subnet_group" "main" {
-  count       = "${var.enabled ? 1 : 0}"
-  name        = "${var.name}"
+  count       = var.enabled ? 1 : 0
+  name        = var.name
   description = "Group of DB subnets"
-  subnet_ids  = ["${var.subnets}"]
+  subnet_ids  = [var.subnets]
 
-  tags = "${local.tags}"
+  tags = local.tags
 }
 
 // Geneate an ID when an environment is initialised
 resource "random_id" "server" {
-  count = "${var.enabled ? 1 : 0}"
+  count = var.enabled ? 1 : 0
 
   keepers = {
-    id = "${aws_db_subnet_group.main.name}"
+    id = aws_db_subnet_group.main.name
   }
 
   byte_length = 8
@@ -230,7 +230,7 @@ resource "random_id" "server" {
 
 // IAM Role + Policy attach for Enhanced Monitoring
 data "aws_iam_policy_document" "monitoring-rds-assume-role-policy" {
-  count = "${var.enabled ? 1 : 0}"
+  count = var.enabled ? 1 : 0
 
   statement {
     actions = ["sts:AssumeRole"]
@@ -243,13 +243,13 @@ data "aws_iam_policy_document" "monitoring-rds-assume-role-policy" {
 }
 
 resource "aws_iam_role" "rds-enhanced-monitoring" {
-  count              = "${var.enabled && var.monitoring_interval > 0 ? 1 : 0}"
+  count              = var.enabled && var.monitoring_interval > 0 ? 1 : 0
   name_prefix        = "rds-enhanced-mon-${var.envname}-"
-  assume_role_policy = "${data.aws_iam_policy_document.monitoring-rds-assume-role-policy.json}"
+  assume_role_policy = data.aws_iam_policy_document.monitoring-rds-assume-role-policy.json
 }
 
 resource "aws_iam_role_policy_attachment" "rds-enhanced-monitoring-policy-attach" {
-  count      = "${var.enabled && var.monitoring_interval > 0 ? 1 : 0}"
-  role       = "${aws_iam_role.rds-enhanced-monitoring.name}"
+  count      = var.enabled && var.monitoring_interval > 0 ? 1 : 0
+  role       = aws_iam_role.rds-enhanced-monitoring.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
