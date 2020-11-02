@@ -180,13 +180,13 @@ resource "aws_rds_cluster" "default" {
   database_name                       = var.database_name
   master_username                     = var.username
   master_password                     = var.password
-  final_snapshot_identifier           = "${var.final_snapshot_identifier}-${random_id.server.hex}"
+  final_snapshot_identifier           = "${var.final_snapshot_identifier}-${random_id.server[count.index].hex}"
   skip_final_snapshot                 = var.skip_final_snapshot
   backup_retention_period             = var.backup_retention_period
   preferred_backup_window             = var.preferred_backup_window
   preferred_maintenance_window        = var.preferred_maintenance_window
   port                                = var.port
-  db_subnet_group_name                = aws_db_subnet_group.main.name
+  db_subnet_group_name                = aws_db_subnet_group.main[count.index].name
   vpc_security_group_ids              = [var.security_groups]
   snapshot_identifier                 = var.snapshot_identifier
   storage_encrypted                   = var.storage_encrypted
@@ -250,6 +250,6 @@ resource "aws_iam_role" "rds-enhanced-monitoring" {
 
 resource "aws_iam_role_policy_attachment" "rds-enhanced-monitoring-policy-attach" {
   count      = var.enabled && var.monitoring_interval > 0 ? 1 : 0
-  role       = aws_iam_role.rds-enhanced-monitoring.name
+  role       = aws_iam_role.rds-enhanced-monitoring[count.index].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }

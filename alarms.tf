@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_metric_alarm" "alarm_rds_DatabaseConnections_writer" {
   count               = var.enabled && var.cw_alarms ? 1 : 0
-  alarm_name          = "${aws_rds_cluster.default.id}-alarm-rds-writer-DatabaseConnections"
+  alarm_name          = "${aws_rds_cluster.default[count.index].id}-alarm-rds-writer-DatabaseConnections"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = var.cw_eval_period_connections
   metric_name         = "DatabaseConnections"
@@ -20,7 +20,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_rds_DatabaseConnections_writer" {
 
 resource "aws_cloudwatch_metric_alarm" "alarm_rds_CPU_writer" {
   count               = var.enabled && var.cw_alarms ? 1 : 0
-  alarm_name          = "${aws_rds_cluster.default.id}-alarm-rds-writer-CPU"
+  alarm_name          = "${aws_rds_cluster.default[count.index].id}-alarm-rds-writer-CPU"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = var.cw_eval_period_cpu
   metric_name         = "CPUUtilization"
